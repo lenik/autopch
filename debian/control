@@ -1,0 +1,18 @@
+Source: pchgreat
+Section: utils
+Priority: optional
+Maintainer: Lenik <pchgreat@bodz.net>
+Build-Depends: debhelper-compat (= 13), meson, ninja-build, python3, gettext, asciidoctor
+Standards-Version: 4.6.0
+Homepage: https://github.com/lenik/pchgreat
+Rules-Requires-Root: no
+
+Package: pchgreat
+Architecture: any
+Depends: 
+    python3, 
+    ${misc:Depends}
+Description: Meson-based CLI project template with example app
+ pchgreat is a template repository for small Python command-line utilities.
+ It currently ships the pchgreat example application and Debian packaging
+ metadata, and includes Python unittest integration.
