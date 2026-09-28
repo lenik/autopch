@@ -1,11 +1,11 @@
 # Example remote build hosts for packaging/win32 (copy, do not commit secrets).
 #
 # Lookup:
-#   <project>/.config/pchgreat/mingw.build-host
-#   <project>/.config/pchgreat/innosetup.build-host
-#   <project>/.config/pchgreat/wix.build-host
-#   <project>/.config/pchgreat/win32.build-host
-#   $HOME/.config/pchgreat/<same>
+#   <project>/.config/autopch/mingw.build-host
+#   <project>/.config/autopch/innosetup.build-host
+#   <project>/.config/autopch/wix.build-host
+#   <project>/.config/autopch/win32.build-host
+#   $HOME/.config/autopch/<same>
 #
 # Multiple stanzas (blank-line separated) are ssh ProxyJump hops.
 # Only the last host's build_dir / shell is used for the build.
@@ -22,5 +22,5 @@
 # shell: powershell
 # # shell: cmd
 # identity: ~/.ssh/winbuild
-# build_dir: C:/build/pchgreat
+# build_dir: C:/build/autopch
 # preserved: true

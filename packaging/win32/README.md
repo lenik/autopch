@@ -13,7 +13,7 @@ build.cmd
 
 ```powershell
 cd packaging\win32\wix
-.\build.ps1 -Name pchgreat -Version 1.2.3
+.\build.ps1 -Name autopch -Version 1.2.3
 ```
 
 From a Unix checkout, `make -C packaging/win32` builds locally when tools
@@ -31,8 +31,8 @@ with a `.build-host` file (not `host.sh`).
 ### `.build-host` (gh-makerelease)
 
 ```
-<project>/.config/pchgreat/<packaging>.build-host
-$HOME/.config/pchgreat/<packaging>.build-host
+<project>/.config/autopch/<packaging>.build-host
+$HOME/.config/autopch/<packaging>.build-host
 ```
 
 `<packaging>` is `mingw`, `innosetup`, or `wix`, then `win32`.
@@ -48,7 +48,7 @@ name: winbuild
 host: 10.0.0.8
 user: builder
 shell: powershell
-build_dir: C:/build/pchgreat
+build_dir: C:/build/autopch
 ```
 
 `shell` for the **last** hop: `bash` (default), `cmd`, or `powershell`/`ps`.

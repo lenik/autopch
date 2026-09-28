@@ -2,7 +2,7 @@
 # FreeBSD pkg: <pkg>-<ver>.pkg
 #
 # Native FreeBSD: meson + pkg create.
-# Other hosts: .config/pchgreat/freebsd.build-host
+# Other hosts: .config/autopch/freebsd.build-host
 
 include ../lib/common.mk
 
@@ -33,8 +33,8 @@ $(MANIFEST):
 		'version: $(VERSION)' \
 		'origin: devel/$(NAME)' \
 		'comment: Meson-based CLI' \
-		'www: https://github.com/lenik/pchgreat' \
-		'maintainer: pchgreat@bodz.net' \
+		'www: https://github.com/lenik/autopch' \
+		'maintainer: autopch@bodz.net' \
 		'prefix: /usr/local' \
 		'desc: Meson-based CLI package' \
 		> "$(MANIFEST)"

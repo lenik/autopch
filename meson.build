@@ -1,5 +1,6 @@
 project(
-    'pchgreat',
+    'autopch',
+    'c',
     version: run_command(
         'sh',
         '-c', '''
@@ -18,55 +19,106 @@ project(
         check: false,
     ).stdout().strip(),
     license: 'AGPL-3.0-or-later',
+    default_options: [
+        'c_std=c99',
+        'warning_level=2',
+    ],
 )
 
 project_author = 'Lenik'
-project_email = 'pchgreat@bodz.net'
+project_email = 'autopch@bodz.net'
 project_year = 2026
 
-py = import('python').find_installation('python3')
-fs = import('fs')
 asciidoctor = find_program('asciidoctor', required: true)
+fs = import('fs')
 
 prefix = get_option('prefix')
 bindir = prefix / get_option('bindir')
 datadir = prefix / get_option('datadir')
-localedir = prefix / get_option('localedir')
 mandir = prefix / get_option('mandir')
+localedir = prefix / get_option('localedir')
 pkgdocdir = datadir / 'doc' / meson.project_name()
 
-subdir('po')
+config_h = configuration_data()
+config_h.set_quoted('PROJECT_VERSION', meson.project_version())
+config_h.set_quoted('PROJECT_AUTHOR', project_author)
+config_h.set_quoted('PROJECT_EMAIL', project_email)
+config_h.set('PROJECT_YEAR', project_year)
+config_h.set_quoted('LOCALEDIR', localedir)
 
-pchgreat_exe = custom_target(
-    'pchgreat',
-    input: 'src/pchgreat.py',
-    output: 'pchgreat',
-    command: [
-        py,
-        '-c',
-        'import os, shutil, sys; shutil.copyfile(sys.argv[1], sys.argv[2]); os.chmod(sys.argv[2], 0o755)',
-        '@INPUT@',
-        '@OUTPUT@',
-    ],
-    build_by_default: true,
+configure_file(
+    output: 'config.h',
+    configuration: config_h,
+)
+
+bas_c_dep = dependency('bas-c', required: true)
+bas_args = [
+    '-DLOGGER_NAME=' + meson.project_name(),
+    '-DTEXT_DOMAIN=' + meson.project_name(),
+    '-D_GNU_SOURCE',
+]
+
+inc = include_directories('src', '.')
+
+common_sources = [
+    'src/util.c',
+    'src/cflags.c',
+    'src/compiler.c',
+    'src/scan.c',
+    'src/includes.c',
+    'src/cluster.c',
+    'src/output.c',
+]
+
+app_sources = [
+    'src/autopch.c',
+] + common_sources
+
+cc = meson.get_compiler('c')
+
+# Flags passed to `ninja pch` so analysis matches this build.
+pch_cflag_list = []
+pch_cflag_list += run_command(
+    find_program('pkg-config'),
+    '--cflags',
+    'bas-c',
+    check: true,
+).stdout().strip().split()
+pch_cflag_list += bas_args
+pch_cflag_list += [
+    '-I' + (meson.project_source_root() / 'src'),
+    '-I' + meson.project_build_root(),
+]
+pch_cflags = ' '.join(pch_cflag_list)
+
+autopch_exe = executable(
+    'autopch',
+    app_sources,
+    include_directories: inc,
+    dependencies: [bas_c_dep],
+    c_args: bas_args,
+    c_pch: 'src/pch1.h',
     install: true,
     install_dir: bindir,
 )
 
-commons_mod = custom_target(
-    'commons',
-    input: 'src/commons.py',
-    output: 'commons.py',
-    command: ['cp', '@INPUT@', '@OUTPUT@'],
-    build_by_default: true,
-    install: true,
-    install_dir: bindir,
+# Regenerate src/pchK.h from project sources (angle-bracket includes only).
+run_target(
+    'pch',
+    command: [
+        autopch_exe,
+        '--cc', cc.cmd_array()[0],
+        '--cflags', pch_cflags,
+        '-o', meson.project_source_root() / 'src' / 'pch',
+        '-r',
+        meson.project_source_root() / 'src',
+    ],
 )
 
 install_data(
-    'pchgreat.bash',
+    'autopch.bash',
     install_dir: datadir / 'bash-completion' / 'completions',
-    rename: 'pchgreat',
+    rename: 'autopch',
 )
 
 install_data(
@@ -79,9 +131,9 @@ install_data(
 )
 
 custom_target(
-    'pchgreat-man',
-    input: 'man/pchgreat.adoc',
-    output: 'pchgreat.1',
+    'autopch-man',
+    input: 'man/autopch.adoc',
+    output: 'autopch.1',
     command: [
         asciidoctor,
         '-b', 'manpage',
@@ -97,25 +149,7 @@ custom_target(
     install_dir: mandir / 'man1',
 )
 
-test(
-    'python-unit',
-    py,
-    args: ['-m', 'unittest', 'discover', '-s', (meson.project_source_root() / 'tests'), '-p', 'test_*.py'],
-    env: [
-        'PYTHONPATH=' + (meson.project_source_root() / 'src'),
-        'PCHGREAT_LOCALEDIR=' + (meson.project_build_root() / 'po'),
-    ],
-)
-
-run_target(
-    'posync',
-    command: [
-        find_program('zfr'),
-        'translate',
-        '--sync',
-        '-C', meson.project_source_root(),
-    ],
-)
+subdir('tests')
 
 run_target(
     'look',
@@ -132,17 +166,9 @@ run_target(
     'install-symlinks',
     command: [
         'bash',
-        '-euc', '''
-            prefix="@0@"
-            bindir="@1@"
-            datadir="@2@"
-            mandir="@3@"
-            mkdir -p "$bindir" "$datadir/bash-completion/completions" "$mandir/man1"
-            sudo ln -sfn "@BUILD_ROOT@/pchgreat" "$bindir/pchgreat"
-            sudo ln -sfn "@BUILD_ROOT@/pchgreat.1" "$mandir/man1/pchgreat.1"
-            sudo ln -sfn "@SOURCE_ROOT@/pchgreat.bash" "$datadir/bash-completion/completions/pchgreat"
-            printf "Symlinks installed under %s\n" "$prefix"
-        '''.format(get_option('prefix'), bindir, datadir, mandir),
+        meson.project_source_root() / 'scripts' / 'install-symlinks.sh',
+        meson.project_source_root(),
+        meson.project_build_root(),
     ],
 )
 
@@ -150,20 +176,8 @@ run_target(
     'uninstall-symlinks',
     command: [
         'bash',
-        '-euc', '''
-            prefix="@0@"
-            bindir="@1@"
-            datadir="@2@"
-            mandir="@3@"
-            for p in "$bindir/pchgreat" "$mandir/man1/pchgreat.1" "$datadir/bash-completion/completions/pchgreat"
-            do
-                if [ -L "$p" ]; then
-                    sudo rm -f "$p"
-                    printf "Removed %s\n" "$p"
-                else
-                    printf "Skipped (not a symlink): %s\n" "$p"
-                fi
-            done
-        '''.format(get_option('prefix'), bindir, datadir, mandir),
+        meson.project_source_root() / 'scripts' / 'uninstall-symlinks.sh',
+        meson.project_source_root(),
+        meson.project_build_root(),
     ],
 )

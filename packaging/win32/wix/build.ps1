@@ -4,12 +4,12 @@
 #
 # Usage:
 #   .\build.cmd
-#   .\build.ps1 -Name pchgreat -Version 1.2.3
+#   .\build.ps1 -Name autopch -Version 1.2.3
 #
 # Prefers WiX 4 (`wix`), then WiX 3 (heat/candle/light).
 
 param(
-    [string]$Name = "pchgreat",
+    [string]$Name = "autopch",
     [string]$Version = "",
     [string]$SrcDir = ""
 )

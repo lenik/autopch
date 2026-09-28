@@ -1,3 +1,17 @@
+autopch (0.0.2) unstable; urgency=medium
+
+  * Rename project from pchgreat to autopch (C/Meson/bas-c)
+  * Cluster headers by co-occurrence correlation (default min 3)
+  * Emit PREFIXK.h/.hpp; map format src:clusterK.h; optional -w writeback
+  * Support -I/-D/--cc/--cflags, -R recursive includes, -r source scan, -d DAG
+  * Number clusters by descending header count (major); largest is PREFIX1
+  * Default language C; -x selects C++; ignore local #include "..." unless -a
+  * -o/--output PREFIX (default ./cluster)
+  * Meson target pch regenerates src/pchK.h; build uses c_pch=src/pch1.h
+  * Align packaging scripts and bas i18n setup with current zephyr C style
+
+ -- Lenik (谢继雷) <lenik@bodz.net>  Mon, 28 Sep 2026 19:52:48 +0800
+
 pchgreat (0.0.1) unstable; urgency=medium
 
   * Initial release

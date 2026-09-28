@@ -7,8 +7,8 @@
 #   make -C packaging/win32 wix        # <pkg>-<ver>.msi
 #
 # If this host cannot build a target, packaging/lib/host.sh reads
-#   <project>/.config/pchgreat/<kind>.build-host
-#   $HOME/.config/pchgreat/<kind>.build-host
+#   <project>/.config/autopch/<kind>.build-host
+#   $HOME/.config/autopch/<kind>.build-host
 # (kind: mingw | innosetup | wix, then fallback win32).
 
 include ../lib/common.mk

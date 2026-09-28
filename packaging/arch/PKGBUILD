@@ -1,14 +1,14 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # stub — align with debian/control and Meson install
-pkgname=pchgreat
+pkgname=autopch
 pkgver=0.0.0
 pkgrel=1
-pkgdesc="Meson-based CLI template"
-arch=('any')
-url="https://github.com/lenik/pchgreat"
+pkgdesc="Cluster headers into balanced PCH sets for C/C++ builds"
+arch=('x86_64')
+url="https://github.com/lenik/autopch"
 license=('AGPL-3.0-or-later')
-depends=('bash')
-makedepends=('meson' 'ninja' 'asciidoctor')
+depends=('bas-c' 'glib2')
+makedepends=('meson' 'ninja' 'pkgconf' 'asciidoctor')
 source=()
 sha256sums=()
 

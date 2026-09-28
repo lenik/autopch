@@ -1,10 +1,10 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: pchgreat
-Upstream-Contact: Lenik <pchgreat@bodz.net>
-Source: https://github.com/lenik/pchgreat
+Upstream-Name: autopch
+Upstream-Contact: Lenik <autopch@bodz.net>
+Source: https://github.com/lenik/autopch
 
 Files: *
-Copyright: 2026 Lenik <pchgreat@bodz.net>
+Copyright: 2026 Lenik <autopch@bodz.net>
 License: AGPL-3+
 
 License: AGPL-3+

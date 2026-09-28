@@ -8,7 +8,7 @@ HOST_SH  := $(abspath $(_LIBDIR)/host.sh)
 SRCDIR   ?= $(abspath $(_LIBDIR)/../..)
 PACKAGEDIR ?= $(abspath $(_LIBDIR)/..)
 
-NAME    ?= pchgreat
+NAME    ?= autopch
 VERSION := $(shell cd "$(SRCDIR)" && { zfr version 2>/dev/null || true; })
 ifeq ($(strip $(VERSION)),)
 VERSION := $(shell head -n1 "$(SRCDIR)/VERSION" 2>/dev/null)

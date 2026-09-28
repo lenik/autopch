@@ -108,7 +108,7 @@ find_build_host_file() {
     local kind=$1
     local k base
     for k in $(_kind_fallbacks "$kind"); do
-        for base in "$PCHGREAT_SRCDIR/.config/pchgreat" "$HOME/.config/pchgreat"; do
+        for base in "$PCHGREAT_SRCDIR/.config/autopch" "$HOME/.config/autopch"; do
             if [[ -f $base/$k.build-host ]]; then
                 printf '%s\n' "$base/$k.build-host"
                 return 0
@@ -292,8 +292,8 @@ cmd_run() {
     echo "  For remote builds, use gh-makerelease with a .build-host file:" >&2
     local k
     for k in $(_kind_fallbacks "$kind"); do
-        echo "    $PCHGREAT_SRCDIR/.config/pchgreat/$k.build-host" >&2
-        echo "    $HOME/.config/pchgreat/$k.build-host" >&2
+        echo "    $PCHGREAT_SRCDIR/.config/autopch/$k.build-host" >&2
+        echo "    $HOME/.config/autopch/$k.build-host" >&2
     done
     return 2
 }

@@ -1,18 +1,18 @@
-Source: pchgreat
+Source: autopch
 Section: utils
 Priority: optional
-Maintainer: Lenik <pchgreat@bodz.net>
-Build-Depends: debhelper-compat (= 13), meson, ninja-build, python3, gettext, asciidoctor
+Maintainer: Lenik <autopch@bodz.net>
+Build-Depends: debhelper-compat (= 13), meson, ninja-build, pkgconf, libbas-c-dev, asciidoctor
 Standards-Version: 4.6.0
-Homepage: https://github.com/lenik/pchgreat
+Homepage: https://github.com/lenik/autopch
 Rules-Requires-Root: no
 
-Package: pchgreat
+Package: autopch
 Architecture: any
-Depends: 
-    python3, 
+Depends:
+    ${shlibs:Depends},
     ${misc:Depends}
-Description: Meson-based CLI project template with example app
- pchgreat is a template repository for small Python command-line utilities.
- It currently ships the pchgreat example application and Debian packaging
- metadata, and includes Python unittest integration.
+Description: Cluster headers into balanced PCH sets for C/C++ builds
+ autopch analyzes a set of C or C++ sources, builds a co-occurrence graph of
+ included headers, and emits one or more precompiled-header clusters so large
+ projects can avoid a single oversized PCH without scattering tiny ones.

@@ -103,7 +103,7 @@ debian/*.debhelper.log
 debian/*.substvars
 debian/.debhelper
 debian/build/
-debian/pchgreat/
+debian/autopch/
 debian/files
 depcomp
 dist/

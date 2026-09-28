@@ -4,12 +4,12 @@
 #
 # Usage (from this directory):
 #   .\build.cmd
-#   .\build.ps1 -Name pchgreat -Version 1.2.3
+#   .\build.ps1 -Name autopch -Version 1.2.3
 #
 # Stages from ..\mingw\stage when present; otherwise meson install on Windows.
 
 param(
-    [string]$Name = "pchgreat",
+    [string]$Name = "autopch",
     [string]$Version = "",
     [string]$SrcDir = ""
 )

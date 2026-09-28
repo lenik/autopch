@@ -1,0 +1,128 @@
+= autopch(1)
+Lenik <autopch@bodz.net>
+v{project-version}, {project-year}
+:doctype: manpage
+:manmanual: User Commands
+:mansource: autopch
+:man-linkstyle: blue R <>
+:nofooter:
+
+== Name
+
+autopch - cluster C/C++ headers into balanced PCH sets
+
+== Synopsis
+
+*autopch* [_OPTION_]... _FILE_...
+
+== Description
+
+*autopch* analyzes a batch of C or C++ source files, builds a co-occurrence
+graph of included headers, and emits one or more precompiled-header (PCH)
+clusters. Large projects often suffer if a single PCH is too large (compile
+artifact explosion) or too small (little reuse). Clustering finds a middle
+ground: headers that frequently appear together form a cluster, and each
+source is assigned to the cluster it can use most effectively.
+
+Two headers become related when they both appear in the same source file.
+Each additional source that includes both increases their correlation. With
+*--min-correlation* _N_ (default 3), edges with weight *>= N* are kept and
+connected components become clusters (components of size 1 are discarded).
+
+Clusters are numbered by *major* (header count): the largest cluster is
+*PREFIX1*, then *PREFIX2*, and so on.
+
+By default the tool analyzes *C* sources. Pass *-x* for C++.
+
+== Options
+
+*-x*::
+  Analyze as C++ (sources: *.c*, *.cc*, *.cpp*, *.cxx*, *.C*; clusters use
+  *.hpp*). Default is C (*.c* / *.h*).
+
+*-c*, *--min-correlation* _N_::
+  Minimum co-occurrence count required to keep an edge (default *3*).
+
+*-I* _DIR_::
+  Add an include search path (repeatable).
+
+*-D*, *--define* _NAME_[=_VAL_]::
+  Define a preprocessor macro (repeatable).
+
+*--cc* _NAME_::
+  Run a gcc/clang-compatible compiler to load builtin macros
+  (`_NAME_ -dM -E -x c|c++ /dev/null`).
+
+*--cflags* _FLAGS_::
+  Parse a flag string and merge *-I*, *-isystem*, and *-D* options.
+
+*-R*, *--recursive-include*::
+  Recursively follow *#include* when collecting each source's header set
+  (also records include edges for *-d*).
+
+*-r*, *--recursive*::
+  Recurse into directories given as positional arguments. Without this flag,
+  directory arguments are ignored.
+
+*-d*, *--dag*::
+  Order headers inside each cluster by include dependency (topological).
+  Without *-d*, order is by frequency then name.
+
+*-a*, *--all*::
+  Also analyze local `#include "..."` forms. By default only `#include <...>`
+  (non-local) includes are considered.
+
+*-o*, *--output* _PREFIX_::
+  Output path prefix for cluster files (default *./cluster*).
+  Writes *_PREFIX_1.h*, *_PREFIX_2.h*, … (or *.hpp* with *-x*).
+
+*-m*, *--map* _FILE_::
+  Write a map of `source.c:clusterK.h` lines (one source per line).
+
+*-w*, *--write*::
+  Insert or rewrite `#include "clusterK.h"` in assigned sources.
+  If a previous autopch include for this prefix is present, that line is
+  updated in place (K may change between runs). Otherwise the include is
+  prepended at the top of the file. Duplicate pch includes are removed.
+
+*-v*, *--verbose*::
+  Increase logging verbosity (repeatable).
+
+*-q*, *--quiet*::
+  Decrease logging verbosity.
+
+*-h*, *--help*::
+  Print a usage summary and exit successfully.
+
+*--version*::
+  Print version and license information and exit successfully.
+
+== Output
+
+Cluster files are written as *_PREFIX__K_.h* (or *.hpp*).
+With *-m*, each map line is `source:clusterK.h`.
+With *-w*, assigned sources are updated in place as described above.
+
+== Exit status
+
+*0*::
+  Success.
+
+*1*::
+  An error occurred (I/O error or analysis failure).
+
+== Author
+
+Written by {project-author} <{project-email}>.
+
+== Copyright
+
+Copyright (C) {project-year}.
+License AGPL-3.0-or-later.
+This is free software: you are free to change and redistribute it under the
+terms of the GNU Affero General Public License.
+There is NO WARRANTY, to the extent permitted by law.
+See the LICENSE file in the source distribution for the full license text,
+including supplemental terms stating this project opposes AI exploitation and
+AI hegemony, and rejects mindless MIT-style licensing and politically naive
+BSD-style licensing.

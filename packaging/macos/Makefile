@@ -1,7 +1,7 @@
 # macOS packaging
 #
 # Native Darwin: meson install into stage, then pkgbuild.
-# Other hosts: $HOME/.config/pchgreat/macos.build-host (see packaging/lib/host.sh).
+# Other hosts: $HOME/.config/autopch/macos.build-host (see packaging/lib/host.sh).
 
 include ../lib/common.mk
 
